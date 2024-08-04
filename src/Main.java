@@ -27,7 +27,10 @@ public class Main {
             System.out.println("5. Delete Employee");
             System.out.println("6. Calculate Payroll");
             System.out.println("7. Generate Payslip");
-            System.out.println("8. Exit");
+            System.out.println("8. Manage Leave");
+            System.out.println("9. Add Bonus/Deductions");
+            System.out.println("10. Generate Reports");
+            System.out.println("11. Exit");
             System.out.print("Enter your choice: ");
             int choice = scanner.nextInt();
 
@@ -54,6 +57,15 @@ public class Main {
                     generatePayslip(scanner);
                     break;
                 case 8:
+                    manageLeave(scanner);
+                    break;
+                case 9:
+                    addBonusDeductions(scanner);
+                    break;
+                case 10:
+                    generateReports();
+                    break;
+                case 11:
                     System.out.println("Exiting...");
                     scanner.close();
                     System.exit(0);
@@ -66,7 +78,7 @@ public class Main {
     private static void addEmployee(Scanner scanner) {
         System.out.print("Enter Employee ID: ");
         int id = scanner.nextInt();
-        scanner.nextLine(); // Consume newline
+        scanner.nextLine();
         System.out.print("Enter Employee Name: ");
         String name = scanner.nextLine();
         System.out.print("Enter Employee Designation: ");
@@ -98,7 +110,7 @@ public class Main {
         System.out.println("4. Name");
         System.out.print("Enter your choice: ");
         int filterChoice = scanner.nextInt();
-        scanner.nextLine(); // Consume newline
+        scanner.nextLine();
 
         switch (filterChoice) {
             case 1:
@@ -121,7 +133,7 @@ public class Main {
     private static void editEmployee(Scanner scanner) {
         System.out.print("Enter the ID of the employee to edit: ");
         int id = scanner.nextInt();
-        scanner.nextLine(); // Consume newline
+        scanner.nextLine();
 
         Employee employee = employees.stream()
                 .filter(e -> e.getId() == id)
@@ -159,7 +171,7 @@ public class Main {
     private static void deleteEmployee(Scanner scanner) {
         System.out.print("Enter the ID of the employee to delete: ");
         int id = scanner.nextInt();
-        scanner.nextLine(); // Consume newline
+        scanner.nextLine();
 
         Employee employee = employees.stream()
                 .filter(e -> e.getId() == id)
@@ -238,7 +250,7 @@ public class Main {
     }
 
     private static void filterByName(Scanner scanner) {
-        System.out.print("Enter name to filter: ");
+        System.out.print("Enter employee name to filter: ");
         String name = scanner.nextLine();
 
         List<Employee> filteredEmployees = employees.stream()
@@ -259,6 +271,7 @@ public class Main {
         for (Employee employee : employees) {
             System.out.print("Enter deduction percentage for " + employee.getName() + " (e.g., for 10% enter 10): ");
             double deductionPercentage = scanner.nextDouble();
+            scanner.nextLine();
 
             double deduction = employee.getSalary() * (deductionPercentage / 100);
             double netSalary = employee.getSalary() - deduction;
@@ -271,7 +284,7 @@ public class Main {
     private static void generatePayslip(Scanner scanner) {
         System.out.print("Enter Employee ID to generate payslip: ");
         int id = scanner.nextInt();
-        scanner.nextLine(); // Consume newline
+        scanner.nextLine();
 
         Employee employee = employees.stream()
                 .filter(e -> e.getId() == id)
@@ -285,6 +298,7 @@ public class Main {
 
         System.out.print("Enter deduction percentage (e.g., for 10% enter 10): ");
         double deductionPercentage = scanner.nextDouble();
+        scanner.nextLine();
 
         double deduction = employee.getSalary() * (deductionPercentage / 100);
         double netSalary = employee.getSalary() - deduction;
@@ -304,6 +318,74 @@ public class Main {
             System.out.println("Payslip generated successfully.");
         } catch (FileNotFoundException | DocumentException e) {
             System.out.println("Error generating payslip: " + e.getMessage());
+        }
+    }
+
+    private static void manageLeave(Scanner scanner) {
+        System.out.print("Enter Employee ID to manage leave: ");
+        int id = scanner.nextInt();
+        scanner.nextLine();
+
+        Employee employee = employees.stream()
+                .filter(e -> e.getId() == id)
+                .findFirst()
+                .orElse(null);
+
+        if (employee == null) {
+            System.out.println("No employee found with the given ID.");
+            return;
+        }
+
+        System.out.print("Enter number of leave days taken: ");
+        int leaveDays = scanner.nextInt();
+        scanner.nextLine();
+
+        employee.setLeaveDays(leaveDays);
+
+        double leaveDeduction = leaveDays * (employee.getSalary() / 30);
+        employee.setOtherDeductions(employee.getOtherDeductions() + leaveDeduction);
+
+        System.out.println("Leave updated and deduction applied.");
+    }
+
+    private static void addBonusDeductions(Scanner scanner) {
+        System.out.print("Enter Employee ID to add bonus/deductions: ");
+        int id = scanner.nextInt();
+        scanner.nextLine();
+
+        Employee employee = employees.stream()
+                .filter(e -> e.getId() == id)
+                .findFirst()
+                .orElse(null);
+
+        if (employee == null) {
+            System.out.println("No employee found with the given ID.");
+            return;
+        }
+
+        System.out.print("Enter bonus amount: ");
+        double bonus = scanner.nextDouble();
+        System.out.print("Enter other deductions amount: ");
+        double otherDeductions = scanner.nextDouble();
+
+        employee.setBonus(bonus);
+        employee.setOtherDeductions(otherDeductions);
+
+        System.out.println("Bonus and deductions updated successfully.");
+    }
+
+    private static void generateReports() {
+        System.out.println("Payroll Summary Report:");
+        for (Employee employee : employees) {
+            double netSalary = employee.getSalary() + employee.getBonus() - employee.getOtherDeductions();
+            System.out.printf("Employee ID: %d | Name: %s | Net Salary: $%.2f\n",
+                    employee.getId(), employee.getName(), netSalary);
+        }
+
+        System.out.println("\nEmployee Attendance Report:");
+        for (Employee employee : employees) {
+            System.out.printf("Employee ID: %d | Name: %s | Leave Days: %d\n",
+                    employee.getId(), employee.getName(), employee.getLeaveDays());
         }
     }
 }
