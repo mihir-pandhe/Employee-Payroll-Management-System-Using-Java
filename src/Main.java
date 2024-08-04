@@ -1,5 +1,4 @@
 package src;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -17,7 +16,8 @@ public class Main {
             System.out.println("2. Display Employees");
             System.out.println("3. Filter Employees");
             System.out.println("4. Edit Employee Details");
-            System.out.println("5. Exit");
+            System.out.println("5. Delete Employee");
+            System.out.println("6. Exit");
             System.out.print("Enter your choice: ");
             int choice = scanner.nextInt();
 
@@ -35,6 +35,9 @@ public class Main {
                     editEmployee(scanner);
                     break;
                 case 5:
+                    deleteEmployee(scanner);
+                    break;
+                case 6:
                     System.out.println("Exiting...");
                     scanner.close();
                     System.exit(0);
@@ -47,7 +50,7 @@ public class Main {
     private static void addEmployee(Scanner scanner) {
         System.out.print("Enter Employee ID: ");
         int id = scanner.nextInt();
-        scanner.nextLine(); // Consume newline
+        scanner.nextLine();
         System.out.print("Enter Employee Name: ");
         String name = scanner.nextLine();
         System.out.print("Enter Employee Designation: ");
@@ -80,7 +83,6 @@ public class Main {
         System.out.print("Enter your choice: ");
         int filterChoice = scanner.nextInt();
         scanner.nextLine();
-
         switch (filterChoice) {
             case 1:
                 filterByDesignation(scanner);
@@ -135,6 +137,32 @@ public class Main {
         }
 
         System.out.println("Employee details updated successfully.");
+    }
+
+    private static void deleteEmployee(Scanner scanner) {
+        System.out.print("Enter the ID of the employee to delete: ");
+        int id = scanner.nextInt();
+        scanner.nextLine();
+
+        Employee employee = employees.stream()
+                .filter(e -> e.getId() == id)
+                .findFirst()
+                .orElse(null);
+
+        if (employee == null) {
+            System.out.println("No employee found with the given ID.");
+            return;
+        }
+
+        System.out.print("Are you sure you want to delete the employee with ID " + id + "? (y/n): ");
+        char confirm = scanner.nextLine().charAt(0);
+
+        if (confirm == 'y' || confirm == 'Y') {
+            employees.remove(employee);
+            System.out.println("Employee deleted successfully.");
+        } else {
+            System.out.println("Deletion cancelled.");
+        }
     }
 
     private static void filterByDesignation(Scanner scanner) {

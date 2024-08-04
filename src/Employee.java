@@ -1,5 +1,4 @@
 package src;
-
 public class Employee {
     private int id;
     private String name;
@@ -47,6 +46,6 @@ public class Employee {
 
     @Override
     public String toString() {
-        return "Employee [id=" + id + ", name=" + name + ", designation=" + designation + ", salary=" + salary + "]";
+        return "ID: " + id + " | Name: " + name + " | Designation: " + designation + " | Salary: $" + salary;
     }
 }
