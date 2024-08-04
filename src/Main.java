@@ -1,4 +1,12 @@
 package src;
+
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.pdf.PdfWriter;
+
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -17,7 +25,9 @@ public class Main {
             System.out.println("3. Filter Employees");
             System.out.println("4. Edit Employee Details");
             System.out.println("5. Delete Employee");
-            System.out.println("6. Exit");
+            System.out.println("6. Calculate Payroll");
+            System.out.println("7. Generate Payslip");
+            System.out.println("8. Exit");
             System.out.print("Enter your choice: ");
             int choice = scanner.nextInt();
 
@@ -38,6 +48,12 @@ public class Main {
                     deleteEmployee(scanner);
                     break;
                 case 6:
+                    calculatePayroll(scanner);
+                    break;
+                case 7:
+                    generatePayslip(scanner);
+                    break;
+                case 8:
                     System.out.println("Exiting...");
                     scanner.close();
                     System.exit(0);
@@ -50,7 +66,7 @@ public class Main {
     private static void addEmployee(Scanner scanner) {
         System.out.print("Enter Employee ID: ");
         int id = scanner.nextInt();
-        scanner.nextLine();
+        scanner.nextLine(); // Consume newline
         System.out.print("Enter Employee Name: ");
         String name = scanner.nextLine();
         System.out.print("Enter Employee Designation: ");
@@ -82,7 +98,8 @@ public class Main {
         System.out.println("4. Name");
         System.out.print("Enter your choice: ");
         int filterChoice = scanner.nextInt();
-        scanner.nextLine();
+        scanner.nextLine(); // Consume newline
+
         switch (filterChoice) {
             case 1:
                 filterByDesignation(scanner);
@@ -104,7 +121,7 @@ public class Main {
     private static void editEmployee(Scanner scanner) {
         System.out.print("Enter the ID of the employee to edit: ");
         int id = scanner.nextInt();
-        scanner.nextLine();
+        scanner.nextLine(); // Consume newline
 
         Employee employee = employees.stream()
                 .filter(e -> e.getId() == id)
@@ -142,7 +159,7 @@ public class Main {
     private static void deleteEmployee(Scanner scanner) {
         System.out.print("Enter the ID of the employee to delete: ");
         int id = scanner.nextInt();
-        scanner.nextLine();
+        scanner.nextLine(); // Consume newline
 
         Employee employee = employees.stream()
                 .filter(e -> e.getId() == id)
@@ -235,6 +252,58 @@ public class Main {
             for (Employee employee : filteredEmployees) {
                 System.out.println(employee);
             }
+        }
+    }
+
+    private static void calculatePayroll(Scanner scanner) {
+        for (Employee employee : employees) {
+            System.out.print("Enter deduction percentage for " + employee.getName() + " (e.g., for 10% enter 10): ");
+            double deductionPercentage = scanner.nextDouble();
+
+            double deduction = employee.getSalary() * (deductionPercentage / 100);
+            double netSalary = employee.getSalary() - deduction;
+
+            System.out.printf("Employee ID: %d | Name: %s | Net Salary: $%.2f\n",
+                    employee.getId(), employee.getName(), netSalary);
+        }
+    }
+
+    private static void generatePayslip(Scanner scanner) {
+        System.out.print("Enter Employee ID to generate payslip: ");
+        int id = scanner.nextInt();
+        scanner.nextLine(); // Consume newline
+
+        Employee employee = employees.stream()
+                .filter(e -> e.getId() == id)
+                .findFirst()
+                .orElse(null);
+
+        if (employee == null) {
+            System.out.println("No employee found with the given ID.");
+            return;
+        }
+
+        System.out.print("Enter deduction percentage (e.g., for 10% enter 10): ");
+        double deductionPercentage = scanner.nextDouble();
+
+        double deduction = employee.getSalary() * (deductionPercentage / 100);
+        double netSalary = employee.getSalary() - deduction;
+
+        Document document = new Document();
+        try {
+            PdfWriter.getInstance(document, new FileOutputStream("Payslip_" + employee.getId() + ".pdf"));
+            document.open();
+            document.add(new Paragraph("Payslip"));
+            document.add(new Paragraph("Employee ID: " + employee.getId()));
+            document.add(new Paragraph("Name: " + employee.getName()));
+            document.add(new Paragraph("Designation: " + employee.getDesignation()));
+            document.add(new Paragraph("Gross Salary: $" + employee.getSalary()));
+            document.add(new Paragraph("Deductions: $" + deduction));
+            document.add(new Paragraph("Net Salary: $" + netSalary));
+            document.close();
+            System.out.println("Payslip generated successfully.");
+        } catch (FileNotFoundException | DocumentException e) {
+            System.out.println("Error generating payslip: " + e.getMessage());
         }
     }
 }

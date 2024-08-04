@@ -1,0 +1,23 @@
+# Ignore Maven output directories
+/target/
+
+# Ignore lib directory if you are using external jars
+/lib/
+
+# Ignore compiled class files
+*.class
+
+# Ignore package files
+*.jar
+*.war
+*.ear
+
+# Ignore IDE-specific files
+*.iml
+.idea/
+*.log
+*.tmp
+
+# Ignore OS-specific files
+.DS_Store
+Thumbs.db

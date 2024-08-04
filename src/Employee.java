@@ -1,4 +1,5 @@
 package src;
+
 public class Employee {
     private int id;
     private String name;
@@ -16,28 +17,24 @@ public class Employee {
         return id;
     }
 
-    public void setId(int id) {
-        this.id = id;
-    }
-
     public String getName() {
         return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public String getDesignation() {
         return designation;
     }
 
-    public void setDesignation(String designation) {
-        this.designation = designation;
-    }
-
     public double getSalary() {
         return salary;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setDesignation(String designation) {
+        this.designation = designation;
     }
 
     public void setSalary(double salary) {
@@ -46,6 +43,6 @@ public class Employee {
 
     @Override
     public String toString() {
-        return "ID: " + id + " | Name: " + name + " | Designation: " + designation + " | Salary: $" + salary;
+        return "ID: " + id + ", Name: " + name + ", Designation: " + designation + ", Salary: $" + salary;
     }
 }
