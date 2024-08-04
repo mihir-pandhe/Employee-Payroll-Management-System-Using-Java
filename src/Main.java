@@ -16,7 +16,8 @@ public class Main {
             System.out.println("1. Add Employee");
             System.out.println("2. Display Employees");
             System.out.println("3. Filter Employees");
-            System.out.println("4. Exit");
+            System.out.println("4. Edit Employee Details");
+            System.out.println("5. Exit");
             System.out.print("Enter your choice: ");
             int choice = scanner.nextInt();
 
@@ -31,6 +32,9 @@ public class Main {
                     filterEmployees(scanner);
                     break;
                 case 4:
+                    editEmployee(scanner);
+                    break;
+                case 5:
                     System.out.println("Exiting...");
                     scanner.close();
                     System.exit(0);
@@ -43,7 +47,7 @@ public class Main {
     private static void addEmployee(Scanner scanner) {
         System.out.print("Enter Employee ID: ");
         int id = scanner.nextInt();
-        scanner.nextLine();
+        scanner.nextLine(); // Consume newline
         System.out.print("Enter Employee Name: ");
         String name = scanner.nextLine();
         System.out.print("Enter Employee Designation: ");
@@ -93,6 +97,44 @@ public class Main {
             default:
                 System.out.println("Invalid choice. Please try again.");
         }
+    }
+
+    private static void editEmployee(Scanner scanner) {
+        System.out.print("Enter the ID of the employee to edit: ");
+        int id = scanner.nextInt();
+        scanner.nextLine();
+
+        Employee employee = employees.stream()
+                .filter(e -> e.getId() == id)
+                .findFirst()
+                .orElse(null);
+
+        if (employee == null) {
+            System.out.println("No employee found with the given ID.");
+            return;
+        }
+
+        System.out.println("Editing employee with ID " + id);
+        System.out.print("Enter new name (leave empty to keep current): ");
+        String name = scanner.nextLine();
+        if (!name.isEmpty()) {
+            employee.setName(name);
+        }
+
+        System.out.print("Enter new designation (leave empty to keep current): ");
+        String designation = scanner.nextLine();
+        if (!designation.isEmpty()) {
+            employee.setDesignation(designation);
+        }
+
+        System.out.print("Enter new salary (leave empty to keep current): ");
+        String salaryInput = scanner.nextLine();
+        if (!salaryInput.isEmpty()) {
+            double salary = Double.parseDouble(salaryInput);
+            employee.setSalary(salary);
+        }
+
+        System.out.println("Employee details updated successfully.");
     }
 
     private static void filterByDesignation(Scanner scanner) {
