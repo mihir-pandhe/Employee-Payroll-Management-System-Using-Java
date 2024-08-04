@@ -72,8 +72,8 @@ public class Employee {
 
     @Override
     public String toString() {
-        return "ID: " + id + ", Name: " + name + ", Designation: " + designation +
-                ", Salary: $" + salary + ", Leave Days: " + leaveDays +
-                ", Bonus: $" + bonus + ", Other Deductions: $" + otherDeductions;
+        return String.format(
+                "ID: %d, Name: %s, Designation: %s, Salary: $%.2f, Leave Days: %d, Bonus: $%.2f, Other Deductions: $%.2f",
+                id, name, designation, salary, leaveDays, bonus, otherDeductions);
     }
 }
